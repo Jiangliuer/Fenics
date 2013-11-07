@@ -1,0 +1,30 @@
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 0.0874614
+L2_error_u2= 0.134036
+Curl_error_u1= 0.752209
+Curl_error_u2= 1.21562
+
+The number of cells(triangle) in the mesh:384The number of vertices in the mesh:225Mesh:8x8P1
+L2_error_u1= 0.0481824
+L2_error_u2= 0.0783667
+Curl_error_u1= 0.809653
+Curl_error_u2= 1.32846
+
+The number of cells(triangle) in the mesh:1536The number of vertices in the mesh:833Mesh:16x16P1
+L2_error_u1= 0.0286971
+L2_error_u2= 0.0479573
+Curl_error_u1= 0.895863
+Curl_error_u2= 1.47031
+
+The number of cells(triangle) in the mesh:6144The number of vertices in the mesh:3201Mesh:32x32P1
+L2_error_u1= 0.0176732
+L2_error_u2= 0.0298728
+Curl_error_u1= 0.97826
+Curl_error_u2= 1.60381
+
+The number of cells(triangle) in the mesh:24576The number of vertices in the mesh:12545Mesh:64x64P1
+L2_error_u1= 0.0110335
+L2_error_u2= 0.0187361
+Curl_error_u1= 1.04639
+Curl_error_u2= 1.7144
+

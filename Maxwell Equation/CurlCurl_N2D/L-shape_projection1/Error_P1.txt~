@@ -1,0 +1,48 @@
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 0.589423
+L2_error_u2= 0.655462
+Curl_error_u1= 0.636861
+Curl_error_u2= 0.666387
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 0.589423
+L2_error_u2= 0.655462
+Curl_error_u1= 0.636861
+Curl_error_u2= 0.666387
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 0.589423
+L2_error_u2= 0.655462
+Curl_error_u1= 0.636861
+Curl_error_u2= 0.666387
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 7.07862e+131
+L2_error_u2= 4.56585e+131
+Curl_error_u1= 6.07635e+131
+Curl_error_u2= 5.71826e+131
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 6.89454e+102
+L2_error_u2= 7.77975e+102
+Curl_error_u1= 1.93506e+103
+Curl_error_u2= 1.67289e+103
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 6.50697e+131
+L2_error_u2= 3.89831e+131
+Curl_error_u1= 5.57355e+131
+Curl_error_u2= 5.00183e+131
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 9.48432e+132
+L2_error_u2= 1.9999e+133
+Curl_error_u1= 1.30049e+133
+Curl_error_u2= 1.99056e+133
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 3.67155e+133
+L2_error_u2= 1.9671e+133
+Curl_error_u1= 3.1951e+133
+Curl_error_u2= 2.61857e+133
+

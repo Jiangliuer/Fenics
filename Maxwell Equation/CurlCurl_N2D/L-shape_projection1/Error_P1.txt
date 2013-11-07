@@ -1,0 +1,18 @@
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 3.67155e+133
+L2_error_u2= 1.9671e+133
+Curl_error_u1= 3.1951e+133
+Curl_error_u2= 2.61857e+133
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 8.51222e+96
+L2_error_u2= 5.95402e+96
+Curl_error_u1= 2.57993e+97
+Curl_error_u2= 1.80843e+97
+
+The number of cells(triangle) in the mesh:96The number of vertices in the mesh:65Mesh:4x4P1
+L2_error_u1= 8.51222e+96
+L2_error_u2= 5.95402e+96
+Curl_error_u1= 2.57993e+97
+Curl_error_u2= 1.80843e+97
+

@@ -1,0 +1,299 @@
+# _*_ coding:utf-8 _*_
+"""
+We solved use iteraction of three varitional form.
+This demo program solves Maxwell L-shape bench-mark problem in 2D
+    curl curl u  - omega^2 u = f    in  \Omega
+    u x n = 0   on \partial\Omega
+    div u = g   in \Omega
+Variational form 
+ (curl u,curl v) + (div u,div v) - omega^2*(u,v) = (f,v) + (g,div v)
+L-shape domain given as following 
+    (-1,1) ______________________(1,1)
+	   |                    |
+	   |                    |
+	   |                    |
+	   |                    |
+	   |          __________|(1.0)  
+	   |          |(0,0)
+	   |          |
+	   |          |
+	   |          |
+   (-1,-1) |__________|(0,-1)   
+  
+and exact solution given by
+    omega = 1
+    phi  = r**(2.0/3.0)*sin((2.0/3.0)*theta)*(x**2-1)*(y**2-1)
+    u = (u1,u2)' = grad phi
+    r = sqrt(x[0]**2 + x[1]**2), theta = atan(x[1]/x[0])
+    u1 = -(2.0/3.0)*r**(-1.0/3.0)*sin((1.0/3.0)*theta)*(x**2 - 1)*(y**2 - 1) - 
+         2*x*r**(2.0/3.0)*sin((2.0/3.0)*theta)*(y**2 - 1)
+    u2 = (2.0/3.0)*r**(-1.0/3.0)*cos((1.0/3.0)*theta)*(x**2 - 1)*(y**2 - 1) + 
+         2*y*r**(2.0/3.0)*sin((2.0/3.0)*theta)*(x**2 - 1)
+    f =  - u 
+    g = div u
+"""
+from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import SubElement
+from xml.etree.ElementTree import dump
+from xml.etree.ElementTree import Comment
+from xml.etree.ElementTree import tostring
+from dolfin import *
+import numpy,sys
+import numpy as np
+import math #import pi,log
+import scitools.BoxField
+import scitools.easyviz as ev
+import time
+
+t0 = time.time()
+# For example: python Maxwell_N2D_L-shape.py  8 8 2 
+# Define mesh
+nx = int(sys.argv[1]) 
+ny = int(sys.argv[2])
+num = int(sys.argv[3])
+mesh = Mesh()
+editor = MeshEditor()
+editor.open(mesh, 2, 2)
+editor.init_vertices(8)
+editor.init_cells(6)
+editor.add_vertex(0, 0.0, 0.0)
+editor.add_vertex(1, 1.0, 0.0)
+editor.add_vertex(2, 1.0, 1.0)
+editor.add_vertex(3, 0.0, 1.0)
+editor.add_vertex(4, -1.0, 1.0)
+editor.add_vertex(5, -1.0, 0.0)
+editor.add_vertex(6, -1.0, -1.0)
+editor.add_vertex(7, 0.0, -1.0)
+editor.add_cell(0, 0, 1, 3)
+editor.add_cell(1, 1, 2, 3)
+editor.add_cell(2, 0, 3, 5)
+editor.add_cell(3, 3, 4, 5)
+editor.add_cell(4, 0, 5, 7)
+editor.add_cell(5, 5, 6, 7)
+editor.close()
+num_refine = int(math.log(int(sys.argv[1]),2))
+h=0.5**num_refine
+for i in range(num_refine):
+	mesh=refine(mesh)
+
+# Define function space
+U_h = VectorFunctionSpace(mesh, "Lagrange", num) #num次元
+B = VectorFunctionSpace(mesh, "Bubble", 3)
+#U_h = U + B
+Q_h = FunctionSpace(mesh, "CG", 1)  #projection space of R(div)
+W_h = FunctionSpace(mesh, "CG", 1)  #projection space of R(curl)
+
+# Define boundary condition:u x n = u_1*n_2 - u_2*n1 = 0 and projection boundary: u = 0
+def project_boundary(x, on_boundary):
+        return on_boundary
+
+def u0_boundary(x, on_boundary):
+	tol=1.0e-14
+        return on_boundary and ( abs(x[1]-1)<tol or abs(x[1]+1)<tol or (abs(x[1])<tol and x[0]>tol) )
+
+def u1_boundary(x, on_boundary):
+	tol=1.0e-14
+        return on_boundary and ( abs(x[0]-1)<tol or abs(x[0]+1)<tol or (abs(x[0])<tol and x[1]<tol) )
+
+u0 = Constant("0.0")
+bc0 = DirichletBC(U_h.sub(0), u0, u0_boundary)
+bc1 = DirichletBC(U_h.sub(1), u0, u1_boundary)
+bc = [bc0,bc1]
+bc_0 = DirichletBC(Q_h, u0, project_boundary) 
+print("bc is created!")
+
+t1 = time.time()	
+
+# Define parameter,f and exact solution.
+u_init = Constant(('0.0','0.0'))
+omega = Constant('1.0')
+def theta(xx,yy):
+   tol = 1.0e-16
+   if xx > tol:
+      return atan(yy/xx)
+   elif xx < -tol:
+      return  pi + atan(yy/xx)
+   elif yy > tol:
+      return pi/2.0
+   elif yy < -tol:
+      return 3.0*pi/2.0
+   else:
+      return 0
+   
+class f_Expression(Expression):
+    def eval(self, value, x):
+        tol = 1.0e-16
+        if abs(x[0])<tol and abs(x[1])<tol:
+          value[0] = 0
+          value[1] = 0
+        else:
+          value[0] = (2.0/3.0)*pow(x[0]**2 + x[1]**2,-1.0/6.0)*sin(theta(x[0],x[1])/3.0)*(x[0]**2 - 1)*(x[1]**2 - 1) -\
+                     2*pow(x[0]**2 + x[1]**2,1.0/3.0)*sin((2.0/3.0)*theta(x[0],x[1]))*x[0]*(x[1]**2 - 1)
+          value[1] = -(2.0/3.0)*pow(x[0]**2 + x[1]**2,-1.0/6.0)*cos(theta(x[0],x[1])/3.0)*(x[0]**2 - 1)*(x[1]**2 - 1) -\
+                      2*pow(x[0]**2 + x[1]**2,1.0/3.0)*sin((2.0/3.0)*theta(x[0],x[1]))*x[1]*(x[0]**2 - 1)
+    def value_shape(self):
+        return (2,)
+f = f_Expression()
+
+class g_Expression(Expression):
+    def eval(self, value, x):
+        tol = 1.0e-16
+        if abs(x[0])<tol and abs(x[1])<tol:
+          value[0] = 0
+        else:
+          value[0] = (8.0/3.0)*pow(x[0]**2 + x[1]**2,-1.0/6.0)*cos(theta(x[0],x[1])/3.0)*x[1]*(x[0]**2 - 1) -\
+                     (8.0/3.0)*pow(x[0]**2 + x[1]**2,-1.0/6.0)*sin(theta(x[0],x[1])/3.0)*x[0]*(x[1]**2 - 1) +\
+                     2*pow(x[0]**2 + x[1]**2,1.0/3.0)*sin((2.0/3.0)*theta(x[0],x[1]))*(x[0]**2 + x[1]**2 - 2) 
+    def value_shap(shap):
+        return(1,) 
+g = g_Expression()
+
+class u_exact_Expression(Expression):
+    def eval(self, value, x):
+        tol = 1.0e-16
+        if abs(x[0])<tol and abs(x[1])<tol:
+          value[0] = 0
+          value[1] = 0
+        else:
+          value[0] = -(2.0/3.0)*pow(x[0]**2 + x[1]**2,-1.0/6.0)*sin(theta(x[0],x[1])/3.0)*(x[0]**2 - 1)*(x[1]**2 - 1) +\
+                     2*pow(x[0]**2 + x[1]**2,1.0/3.0)*sin((2.0/3.0)*theta(x[0],x[1]))*x[0]*(x[1]**2 - 1)
+          value[1] = (2.0/3.0)*pow(x[0]**2 + x[1]**2,-1.0/6.0)*cos(theta(x[0],x[1])/3.0)*(x[0]**2 - 1)*(x[1]**2 - 1) +\
+                     2*pow(x[0]**2 + x[1]**2,1.0/3.0)*sin((2.0/3.0)*theta(x[0],x[1]))*x[1]*(x[0]**2 - 1)
+    def value_shape(self):
+        return (2,)
+u_exact = u_exact_Expression()
+
+# Define variational problem
+u = TrialFunction(U_h)
+v = TestFunction(U_h)
+DivRu = TrialFunction(Q_h)
+q = TestFunction(Q_h)
+CurlRu = TrialFunction(W_h)
+w = TestFunction(W_h)
+u_0 = Function(U_h)
+Div_R_u = Function(Q_h)
+Curl_R_u = Function(W_h)
+
+# Define projection of  DivR(v)
+Div_R_a = inner(DivRu,q)*dx
+Div_R_L = - inner(u_0,grad(q))*dx
+
+# Definition projection of  R(Curl)
+Curl_R_a = inner(CurlRu,w)*dx
+Curl_R_L = inner(u_0,curl(w))*dx
+
+# Projection varitional problem
+n = FacetNormal(mesh) 
+a = omega**2*inner(u,v)*dx
+L = inner(curl(Curl_R_u),v)*dx - inner(grad(Div_R_u),v)*dx - inner(f,v)*dx - inner(g,div(v))*dx
+
+# Initial
+S_g = project(g,Q_h
+a0 = inner(curl(u),curl(v))*dx + inner(div(u),div(v))*dx - omega**2*inner(u,v)*dx
+L0 = inner(f,v)*dx + inner(S_g,div(v))*dx
+(A0,b0) = assemble_system(a0,L0,bc)
+solve(A0,u_0.vector(),b0,'gmres','hypre_amg')
+(A1,b1) = assemble_system(Div_R_a, Div_R_L, bc_0)
+A2 = assemble(Curl_R_a)
+b2 = assemble(Curl_R_L)
+solve(A1,Div_R_u.vector(),b1)
+solve(A2,Curl_R_u.vector(),b2)
+
+# Solve
+num_iter = 500
+tol = 1.0e-40
+u0 = Function(U_h)
+for i in range(num_iter):
+    (A,b) = assemble_system(a,L,bc)
+    print("A and b is assembled!")
+    t2 = time.time()
+    solver = KrylovSolver("cg", "ilu")
+    solver.parameters["absolute_tolerance"] = 1E-14
+    solver.parameters["relative_tolerance"] = 1E-14
+    solver.parameters["maximum_iterations"] = 1000
+    set_log_level(DEBUG)
+    solve(A, u0.vector(), b) #solve(A,w1.vector(), b,'gmres','hypre_amg')
+    print "Finish solve!"
+    diff_u = u0.vector().array() - u_0.vector().array()
+    eps_u = numpy.linalg.norm(diff_u, ord=2)
+    print("Infinite Norm of u0-u_0, iter=%d: %g" % (i, eps_u))
+    if eps_u<tol:
+	break
+
+    u_0.assign(u0)
+    (A1,b1) = assemble_system(Div_R_a, Div_R_L, bc_0)
+    b2 = assemble(Curl_R_L)
+    solve(A1,Div_R_u.vector(),b1)
+    solve(A2,Curl_R_u.vector(),b2)
+
+# Save solution in VTK format
+file = File("Data/Maxwell S2D_%gx%gP%g.pvd"%(nx,ny,num))
+file << u0
+
+# Plot solution(mesh,surf,contour)
+visual_mesh = plot(mesh,title = "Mesh")
+visual_u = plot(u0,wireframe =  True,title = "the approximation of u",rescale = True , axes = True, basename = "deflection" ,legend ="u0")
+visual_u1 = plot(u0[0],wireframe =  True,title="the approximation of u1",rescale = True , axes = True, basename = "deflection" ,legend ="u1")
+visual_u2 = plot(u0[1],wireframe =  True,title = "the approximation of u2",rescale = True , axes = True, basename = "deflection" ,legend ="u2")
+visual_mesh.write_png("Image/P%g_mesh_%gx%g.png"%(num,nx,ny))
+visual_u.write_png("Image/P%g_u_%gx%g"%(num,nx,ny))
+visual_u1.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_u2.elevate(-65)
+visual_u1.write_png("Image/P%g_u1_%gx%g.png"%(num,nx,ny))
+visual_u2.write_png("Image/P%g_u2_%gx%g.png"%(num,nx,ny))
+
+# Define a higher-order approximation to the exact solution
+t3 = time.time()
+Ue=VectorFunctionSpace(mesh,"Lagrange",degree=5)
+u_ex = interpolate(u_exact,Ue)
+t4 = time.time()
+# Plot exact solution
+visual_ue1 = plot(u_ex[0],wireframe = True,title="the exact solution of u1",rescale = True , axes = True, basename = "deflection" ,legend ="u1")
+visual_ue2 = plot(u_ex[1],wireframe = True,title="the exact solution of u2",rescale = True , axes = True, basename = "deflection" ,legend ="u2")
+visual_ue1.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_ue2.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_ue1.write_png("Image/P%gu1_exact_%gx%g.png"%(num,nx,ny))
+visual_ue2.write_png("Image/P%gu2_exact_%gx%g.png"%(num,nx,ny))
+interactive()
+
+#Define L2 norm and H1 norm relative errors 
+u1_error = (u0[0]-u_ex[0])**2*dx
+u2_error = (u0[1]-u_ex[1])**2*dx
+u1_ex_L2 = u_ex[0]**2*dx
+u2_ex_L2 = u_ex[1]**2*dx
+
+L2_error_u1 = sqrt(assemble(u1_error)/assemble(u1_ex_L2))
+L2_error_u2 = sqrt(assemble(u2_error)/assemble(u2_ex_L2))
+
+Curl_Div_error_u1 = sqrt(assemble(inner(curl(u0[0]-u_ex[0]),curl(u0[0]-u_ex[0]))*dx + inner(div(u0[0]-u_ex[0]),div(u0[0]-u_ex[0]))*dx)/assemble(inner(curl(u_ex[0]),curl(u_ex[0]))*dx + inner(div(u_ex[0]),div(u_ex[0]))*dx))
+Curl_Div_error_u2 = sqrt(assemble(inner(curl(u0[1]-u_ex[1]),curl(u0[1]-u_ex[1]))*dx + inner(div(u0[1]-u_ex[1]),div(u0[1]-u_ex[1]))*dx)/assemble(inner(curl(u_ex[1]),curl(u_ex[1]))*dx + inner(div(u_ex[0]),div(u_ex[0]))*dx))
+
+
+print("h=" ,CellSize(mesh))
+print("The number of cells(triangle) in the mesh:" ,mesh.num_cells())
+print("The number of vertices in the mesh:" ,mesh.num_vertices())
+print("L2_error_u1=" ,L2_error_u1)
+print("L2_error_u2=" ,L2_error_u2)
+print("Curl_error_u1=" ,Curl_Div_error_u1)
+print("Curl_error_u2=" ,Curl_Div_error_u2)
+print("Total time is=",time.time() - t0)
+print("Assemble time is=",t2-t1)
+print("Interpolate exact u time is=",t4 - t3)
+
+file_object = open('Error_P%g.txt'%(num),'a')
+file_object.writelines("The number of cells(triangle) in the mesh:%g" %(mesh.num_cells()))
+file_object.writelines("The number of vertices in the mesh:%g"%(mesh.num_vertices()))
+file_object.writelines("Mesh:%gx%gP%g\n"%(nx,ny,num))
+file_object.writelines("L2_error_u1= %g\n"%(L2_error_u1))
+file_object.writelines("L2_error_u2= %g\n"%(L2_error_u2))
+file_object.writelines("Curl_error_u1= %g\n" %(Curl_Div_error_u1))
+file_object.writelines("Curl_error_u2= %g\n\n"%(Curl_Div_error_u2))
+file_object.close()
+
+file_output = open('Ratio_P%g.txt'%(num),'a')
+E = np.array([nx,L2_error_u1,L2_error_u2,Curl_Div_error_u1,Curl_Div_error_u2])
+print(E)
+file_output.writelines("%g %g %g %g %g\n"%(E[0],E[1],E[2],E[3],E[4]))
+
+

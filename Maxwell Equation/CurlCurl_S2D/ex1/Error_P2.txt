@@ -1,0 +1,120 @@
+The number of cells(triangle) in the mesh:128The number of vertices in the mesh:81Mesh:8x8P2
+L2_error_u1= 0.0150688
+L2_error_u2= 0.0150688
+Curl_error_u1= 0.197377
+Curl_error_u2= 0.197377
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:289Mesh:16x16P2
+L2_error_u1= 0.00349603
+L2_error_u2= 0.00349603
+Curl_error_u1= 0.0927294
+Curl_error_u2= 0.0927294
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1089Mesh:32x32P2
+L2_error_u1= 0.000836508
+L2_error_u2= 0.000836508
+Curl_error_u1= 0.0445339
+Curl_error_u2= 0.0445339
+
+The number of cells(triangle) in the mesh:8192The number of vertices in the mesh:4225Mesh:64x64P2
+L2_error_u1= 0.000203841
+L2_error_u2= 0.000203841
+Curl_error_u1= 0.0216968
+Curl_error_u2= 0.0216968
+
+The number of cells(triangle) in the mesh:32768The number of vertices in the mesh:16641Mesh:128x128P2
+L2_error_u1= 5.02227e-05
+L2_error_u2= 5.02227e-05
+Curl_error_u1= 0.0106746
+Curl_error_u2= 0.0106746
+
+The number of cells(triangle) in the mesh:131072The number of vertices in the mesh:66049Mesh:256x256P2
+L2_error_u1= 1.24541e-05
+L2_error_u2= 1.24541e-05
+Curl_error_u1= 0.00528558
+Curl_error_u2= 0.00528558
+
+The number of cells(triangle) in the mesh:128The number of vertices in the mesh:81Mesh:8x8P2
+L2_error_u1= 0.001414
+L2_error_u2= 0.001414
+Curl_error_u1= 0.017082
+Curl_error_u2= 0.017082
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:289Mesh:16x16P2
+L2_error_u1= 0.000176598
+L2_error_u2= 0.000176598
+Curl_error_u1= 0.00433918
+Curl_error_u2= 0.00433918
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1089Mesh:32x32P2
+L2_error_u1= 2.21369e-05
+L2_error_u2= 2.21369e-05
+Curl_error_u1= 0.00109141
+Curl_error_u2= 0.00109141
+
+The number of cells(triangle) in the mesh:8192The number of vertices in the mesh:4225Mesh:64x64P2
+L2_error_u1= 2.77267e-06
+L2_error_u2= 2.77267e-06
+Curl_error_u1= 0.000273535
+Curl_error_u2= 0.000273535
+
+The number of cells(triangle) in the mesh:32768The number of vertices in the mesh:16641Mesh:128x128P2
+L2_error_u1= 3.43795e-07
+L2_error_u2= 3.43796e-07
+Curl_error_u1= 6.84599e-05
+Curl_error_u2= 6.84599e-05
+
+The number of cells(triangle) in the mesh:131072The number of vertices in the mesh:66049Mesh:256x256P2
+L2_error_u1= nan
+L2_error_u2= nan
+Curl_error_u1= 1.71239e-05
+Curl_error_u2= 1.71239e-05
+
+The number of cells(triangle) in the mesh:131072The number of vertices in the mesh:66049Mesh:256x256P2
+L2_error_u1= 1.80465e-08
+L2_error_u2= 1.80385e-08
+Curl_error_u1= 1.71239e-05
+Curl_error_u2= 1.71239e-05
+
+The number of cells(triangle) in the mesh:128The number of vertices in the mesh:81Mesh:8x8P2
+L2_error_u1= 0.001414
+L2_error_u2= 0.001414
+Curl_error_u1= 0.017082
+Curl_error_u2= 0.017082
+
+The number of cells(triangle) in the mesh:131072The number of vertices in the mesh:66049Mesh:256x256P2
+L2_error_u1= 1.80465e-08
+L2_error_u2= 1.80385e-08
+Curl_error_u1= 1.71239e-05
+Curl_error_u2= 1.71239e-05
+
+The number of cells(triangle) in the mesh:128The number of vertices in the mesh:81Mesh:8x8P2
+L2_error_u1= 0.001414
+L2_error_u2= 0.001414
+Curl_error_u1= 0.017082
+Curl_error_u2= 0.017082
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:289Mesh:16x16P2
+L2_error_u1= 0.000176598
+L2_error_u2= 0.000176598
+Curl_error_u1= 0.00433918
+Curl_error_u2= 0.00433918
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1089Mesh:32x32P2
+L2_error_u1= 2.21369e-05
+L2_error_u2= 2.21369e-05
+Curl_error_u1= 0.00109141
+Curl_error_u2= 0.00109141
+
+The number of cells(triangle) in the mesh:8192The number of vertices in the mesh:4225Mesh:64x64P2
+L2_error_u1= 2.77279e-06
+L2_error_u2= 2.77279e-06
+Curl_error_u1= 0.000273535
+Curl_error_u2= 0.000273535
+
+The number of cells(triangle) in the mesh:32768The number of vertices in the mesh:16641Mesh:128x128P2
+L2_error_u1= 3.4481e-07
+L2_error_u2= 3.44809e-07
+Curl_error_u1= 6.84599e-05
+Curl_error_u2= 6.84599e-05
+

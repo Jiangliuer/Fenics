@@ -1,0 +1,12 @@
+The number of cells(triangle) in the mesh:32The number of vertices in the mesh:25Mesh:4x4P1
+L2_error_u1= 27.5453
+L2_error_u2= 19.6825
+Curl_error_u1= 208.654
+Curl_error_u2= 142.481
+
+The number of cells(triangle) in the mesh:128The number of vertices in the mesh:81Mesh:8x8P1
+L2_error_u1= 27.4961
+L2_error_u2= 36.408
+Curl_error_u1= 428.757
+Curl_error_u2= 566.211
+
