@@ -297,6 +297,7 @@ u2_ex_L2 = u_ex[1]**2*dx
 L2_error_u1 = sqrt(assemble(u1_error)/assemble(u1_ex_L2))
 L2_error_u2 = sqrt(assemble(u2_error)/assemble(u2_ex_L2))
 
+
 """
 u_init=interpolate(u_init,Ue)
 Curl_Div_error_u1=(errornorm(u0[0],u_ex[0],norm_type='Hcurl',degree_rise=2)+erronorm(u0[0],u_ex[0],norm_type='Hdiv',degree_rise=2))/(errornorm(u_ex[0],u_init, norm_type='Hcurl',degree_rise=2)+erronorm(u_ex[0],u_init,norm_type='Hdiv',degree_rise=2))
