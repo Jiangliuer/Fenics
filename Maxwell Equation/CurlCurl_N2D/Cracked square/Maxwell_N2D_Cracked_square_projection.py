@@ -265,7 +265,7 @@ visual_u2.write_png("Image/P%g_u2_%gx%g.png"%(num,nx,ny))
 
 # Plot exact solution
 
-"""
+
 import scitools.BoxField
 import scitools.easyviz as ev
 X = 0; Y = 1; Z = 2
@@ -295,7 +295,7 @@ ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values,
         title='mesh plot of u', savefig='mesh-%g-%g(mesh:%g-%g).png'% (degree1,degree2,nx,ny))
 interactive()
 
-"""
+
 visual_ue1 = plot(u_ex[0],
   		  wireframe = False,
 		  title="the exact solution of u1",
@@ -310,11 +310,11 @@ visual_ue2 = plot(u_ex[1],
 		  axes = True,
 		  basename = "deflection",
 		  legend ="u2")
-#visual_ue1.elevate(-65) #tilt camera -65 degree(latitude dir)
-#visual_ue2.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_ue1.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_ue2.elevate(-65) #tilt camera -65 degree(latitude dir)
 visual_ue1.write_png("Image/P%gu1_exact_%gx%g.png"%(num,nx,ny))
 visual_ue2.write_png("Image/P%gu2_exact_%gx%g.png"%(num,nx,ny))
-#interactive()
+interactive()
 
 
 
@@ -335,10 +335,9 @@ u2_curl_div = inner(curl(u_ex[1]),curl(u_ex[1]))*dx + div(u_ex[0])**2*dx
 Curl_Div_error_u1 = sqrt(assemble(u1_curl_div_error)/assemble(u1_curl_div))
 Curl_Div_error_u2 = sqrt(assemble(u2_curl_div_error)/assemble(u1_curl_div))
 """
-e1 = u0[0] - u_ex[0]
-e2 = u0[1] - u_ex[1]
-Curl_Div_error_u1 = norm(e1,'L2',mesh)/norm(u_ex[0],'L2',mesh)
-Curl_Div_error_u2 = norm(e2,'L2',mesh)/norm(u_ex[1],'L2',mesh)
+
+Curl_Div_error_u1 = norm(u0[0] - u_ex[0],'L2',mesh)/norm(u_ex[0],'L2',mesh)
+Curl_Div_error_u2 = norm(u0[1] - u_ex[1],'L2',mesh)/norm(u_ex[1],'L2',mesh)
 
 print("h=" ,CellSize(mesh))
 print("The number of cells(triangle) in the mesh:" ,mesh.num_cells())

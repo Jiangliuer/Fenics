@@ -2,9 +2,3 @@
 """
 This demo program solves Maxwelll equations in 3D
     
-"""
-
-# Define function space
-U_h = VectorFunctionSpace(mesh, "DG", num) #num
-V
-
