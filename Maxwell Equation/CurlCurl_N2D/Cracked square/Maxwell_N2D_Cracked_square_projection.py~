@@ -27,7 +27,7 @@ and exact solution given by
     u = (u1,u2)' = grad phi
     r = sqrt(x[0]**2 + x[1]**2), theta = atan(x[1]/x[0])
     u1 = -(1.0/2.0)*r**(-1.0/2.0)*sin((1.0/2.0)*theta)*(x**2 - 1)*(y**2 - 1) + 
-         2*x*r**(1.0/2.0)*sin((1.0/1.0)*theta)*(y**2 - 1)
+         2*x*r**(1.0/2.0)*sin((1.0/2.0)*theta)*(y**2 - 1)
     u2 = (1.0/2.0)*r**(-1.0/2.0)*cos((1.0/2.0)*theta)*(x**2 - 1)*(y**2 - 1) + 
          2*y*r**(1.0/2.0)*sin((1.0/2.0)*theta)*(x**2 - 1)
     f =  - u 
@@ -86,14 +86,13 @@ B = FunctionSpace(mesh, "Bubble", 3)
 Q_h = FunctionSpace(mesh, "CG", 1)  #projection space of R(div)
 W_h = FunctionSpace(mesh, "CG", 1)  #projection space of R(curl)
 M = (U_h + B)*(U_h + B)
-Mix_h = MixedFunctionSpace([M,Q_h, W_h]) 
+Mix_h = MixedFunctionSpace([M, Q_h, W_h]) 
 print("num_sub_spaces():",Mix_h.num_sub_spaces())
 
 # Define boundary condition:u x n = u_1*n_2 - u_2*n_1 = 0 and projection boundary: u = 0
 def project_boundary(x, on_boundary):
         tol=1.0e-14
-        return on_boundary
-#(abs(x[1]-1)<tol or abs(x[1]+1)<tol or abs(x[0]-1)<tol or abs(x[0]+1)<tol or (x[0]>tol and abs(x[1])<tol)) 
+        return on_boundary and (abs(x[1]-1)<tol or abs(x[1]+1)<tol or abs(x[0]-1)<tol or abs(x[0]+1)<tol or (x[0]>tol and abs(x[1])<tol)) 
 
 def u0_boundary(x, on_boundary):
 	tol=1.0e-14
@@ -117,6 +116,8 @@ t1 = time.time()
 
 omega = Constant('1.0')
 
+
+
 def theta(xx,yy):
    tol = 1.0e-16
    if xx > tol:
@@ -139,17 +140,17 @@ class f_Expression(Expression):
           value[0] = 0
           value[1] = 0
         else:
-          value[0] =  (1.0/2.0)*pow(x[0]**2 + x[1]**2,-1.0/4.0)*sin(theta(x[0],x[1])/2.0)*(x[0]**2 - 1)*(x[1]**2 - 1) - \
-		       2.0*pow(x[0]**2 + x[1]**2,1.0/4.0)*sin(theta(x[0],x[1])/2.0)*x[0]*(x[1]**2 - 1)
-          value[1] = -(1.0/2.0)*pow(x[0]**2 + x[1]**2,-1.0/4.0)*cos(theta(x[0],x[1])/2.0)*(x[0]**2 - 1)*(x[1]**2 - 1) - \
-		       2.0*pow(x[0]**2 + x[1]**2,1.0/4.0)*sin(theta(x[0],x[1])/2.0)*x[1]*(x[0]**2 - 1)
+          value[0] =  (1.0/2.0)*pow(x[0]**2 + x[1]**2,-1.0/4.0)*sin(theta(x[0],x[1])/2.0)*(x[0]**2 - 1)*(x[1]**2 - 1) - 2.0*pow(x[0]**2 + x[1]**2,1.0/4.0)*sin(theta(x[0],x[1])/2.0)*x[0]*(x[1]**2 - 1)
+          value[1] = -(1.0/2.0)*pow(x[0]**2 + x[1]**2,-1.0/4.0)*cos(theta(x[0],x[1])/2.0)*(x[0]**2 - 1)*(x[1]**2 - 1) - 2.0*pow(x[0]**2 + x[1]**2,1.0/4.0)*sin(theta(x[0],x[1])/2.0)*x[1]*(x[0]**2 - 1)
     def value_shape(self):
         return (2,)
+
 f = f_Expression(mesh = mesh)
 f = interpolate(f,VectorFunctionSpace(mesh,"Lagrange",degree=1))
+plot(mesh)
 plot(f[0],axes = True)
 plot(f[1],axes = True)
-
+interactive()
 
 class g_Expression(Expression):
     def __init__(self, mesh):
@@ -264,8 +265,27 @@ visual_u1.write_png("Image/P%g_u1_%gx%g.png"%(num,nx,ny))
 visual_u2.write_png("Image/P%g_u2_%gx%g.png"%(num,nx,ny))
 
 # Plot exact solution
+visual_ue1 = plot(0.1*u_ex[0],
+  		  wireframe = False,
+		  title="the exact solution of u1",
+    	          rescale = True,
+		  axes = True,
+		  basename = "deflection",
+		  legend ="u1")
+visual_ue2 = plot(0.1*u_ex[1],
+		  wireframe = False,
+ 		  title="the exact solution of u2",
+		  rescale = True,
+		  axes = True,
+		  basename = "deflection",
+		  legend ="u2")
+visual_ue1.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_ue2.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_ue1.write_png("Image/P%gu1_exact_%gx%g.png"%(num,nx,ny))
+visual_ue2.write_png("Image/P%gu2_exact_%gx%g.png"%(num,nx,ny))
+interactive()
 
-
+"""
 import scitools.BoxField
 import scitools.easyviz as ev
 X = 0; Y = 1; Z = 2
@@ -293,39 +313,22 @@ ev.surf(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values,
 ev.figure()
 ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values,
         title='mesh plot of u', savefig='mesh-%g-%g(mesh:%g-%g).png'% (degree1,degree2,nx,ny))
-interactive()
-
-
-visual_ue1 = plot(u_ex[0],
-  		  wireframe = False,
-		  title="the exact solution of u1",
-    	          rescale = True,
-		  axes = True,
-		  basename = "deflection",
-		  legend ="u1")
-visual_ue2 = plot(u_ex[1],
-		  wireframe = False,
- 		  title="the exact solution of u2",
-		  rescale = True,
-		  axes = True,
-		  basename = "deflection",
-		  legend ="u2")
-visual_ue1.elevate(-65) #tilt camera -65 degree(latitude dir)
-visual_ue2.elevate(-65) #tilt camera -65 degree(latitude dir)
-visual_ue1.write_png("Image/P%gu1_exact_%gx%g.png"%(num,nx,ny))
-visual_ue2.write_png("Image/P%gu2_exact_%gx%g.png"%(num,nx,ny))
-interactive()
-
-
+"""
 
 #Define L2 norm and H_(curl,div) norm relative errors 
 u1_error = (u0[0]-u_ex[0])**2*dx
 u2_error = (u0[1]-u_ex[1])**2*dx
 u1_ex_L2 = u_ex[0]**2*dx
 u2_ex_L2 = u_ex[1]**2*dx
-
 L2_error_u1 = sqrt(assemble(u1_error)/assemble(u1_ex_L2))
 L2_error_u2 = sqrt(assemble(u2_error)/assemble(u2_ex_L2))
+
+a_u1_0=inner(curl(u0[0]-u_ex[0]),curl(u0[0]-u_ex[0]))*dx + inner(div(u0[0]-u_ex[0]),div(u0[0]-u_ex[0]))*dx
+a_u2_0=inner(curl(u0[1]-u_ex[1]),curl(u0[1]-u_ex[1]))*dx + inner(div(u0[1]-u_ex[1]),div(u0[1]-u_ex[1]))*dx
+a_u1_1=inner(curl(u_ex[0]),curl(u_ex[0]))*dx + inner(div(u_ex[0]),div(u_ex[0]))*dx
+a_u2_1=inner(curl(u_ex[1]),curl(u_ex[1]))*dx + inner(div(u_ex[1]),div(u_ex[1]))*dx
+Curl_Div_error_u1 = sqrt(assemble(a_u1_0)/assemble(a_u1_1))
+Curl_Div_error_u2 = sqrt(assemble(a_u2_0)/assemble(a_u2_1))
 """
 (u0_0,u0_1) = split
 u1_curl_div_error = inner(curl(u0[0]-u_ex[0]),curl(u0[0]-u_ex[0]))*dx + inner(div(u0[0]-u_ex[0]),div(u0[0]-u_ex[0]))*dx
@@ -335,9 +338,6 @@ u2_curl_div = inner(curl(u_ex[1]),curl(u_ex[1]))*dx + div(u_ex[0])**2*dx
 Curl_Div_error_u1 = sqrt(assemble(u1_curl_div_error)/assemble(u1_curl_div))
 Curl_Div_error_u2 = sqrt(assemble(u2_curl_div_error)/assemble(u1_curl_div))
 """
-
-Curl_Div_error_u1 = norm(u0[0] - u_ex[0],'L2',mesh)/norm(u_ex[0],'L2',mesh)
-Curl_Div_error_u2 = norm(u0[1] - u_ex[1],'L2',mesh)/norm(u_ex[1],'L2',mesh)
 
 print("h=" ,CellSize(mesh))
 print("The number of cells(triangle) in the mesh:" ,mesh.num_cells())

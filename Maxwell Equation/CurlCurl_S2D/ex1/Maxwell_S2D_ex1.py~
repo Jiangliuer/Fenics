@@ -126,12 +126,13 @@ u_box = scitools.BoxField.dolfin_function2BoxField(us, mesh, (nx,ny), uniform_me
 
 ev.contour(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, 20, 
            savefig='Image/Contour of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny), title='Contour plot of u1', colorbar='on')
+
 ev.figure()
-ev.surf(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, shading='interp', colorbar='on', 
-        title='surf plot of u1', savefig='Image/Surf of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
-ev.figure()
-ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values,colorbar='on',shading='interp',
-        title='mesh plot of u1', savefig='Image/Mesh of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+ev.surf(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, shading='interp', colorbar='on', title='surf plot of u1', savefig='Image/Surf of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+
+#ev.figure()
+#ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values,colorbar='on',shading='interp', title='mesh plot of u1', savefig='Image/Mesh of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+
 # Plot exact solution
 u1_ex,u2_ex = u_ex.split(deepcopy = True)
 u1_ex = u1_ex if u1_ex.ufl_element().degree() == 1 else \
@@ -141,12 +142,12 @@ u_box = scitools.BoxField.dolfin_function2BoxField(u1_ex, mesh, (nx,ny), uniform
 ev.figure()
 ev.contour(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, 20, 
            savefig='Image/Contour of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny), title='Contour plot of exact u1',colorbar='on')
+
 ev.figure()
-ev.surf(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, shading='interp', colorbar='on', 
-        title='surf plot of exact u1', savefig='Image/Surf of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
-ev.figure()
-ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, colorbar="on",
-        title='mesh plot of exact u1', savefig='Image/Mesh of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+ev.surf(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, shading='interp', colorbar='on', title='surf plot of exact u1', savefig='Image/Surf of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+
+#ev.figure()
+#ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, colorbar="on", title='mesh plot of exact u1', savefig='Image/Mesh of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
 
 
 # Define L2 norm and H1 norm relative errors 

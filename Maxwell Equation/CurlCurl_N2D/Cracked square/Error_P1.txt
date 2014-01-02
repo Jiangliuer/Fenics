@@ -1,0 +1,66 @@
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 2.95173
+L2_error_u2= 2.87621
+Curl_error_u1= 5.25834
+Curl_error_u2= 7.68639
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1105Mesh:16x16P1
+L2_error_u1= 3.48753
+L2_error_u2= 3.40067
+Curl_error_u1= 6.64381
+Curl_error_u2= 9.14635
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1105Mesh:16x16P1
+L2_error_u1= 7.87453
+L2_error_u2= 7.70612
+Curl_error_u1= 29.9637
+Curl_error_u2= 26.1969
+
+The number of cells(triangle) in the mesh:32The number of vertices in the mesh:27Mesh:2x2P1
+L2_error_u1= 20.989
+L2_error_u2= 21.123
+Curl_error_u1= 41.6575
+Curl_error_u2= 47.9487
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 12.4658
+L2_error_u2= 12.2084
+Curl_error_u1= 41.9518
+Curl_error_u2= 39.4594
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 12.7321
+L2_error_u2= 12.4911
+Curl_error_u1= 42.7396
+Curl_error_u2= 40.4772
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 12.7321
+L2_error_u2= 12.4911
+Curl_error_u1= 42.7396
+Curl_error_u2= 40.4772
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 5.67142e+15
+L2_error_u2= 5.80141e+15
+Curl_error_u1= 1.8791e+16
+Curl_error_u2= 1.95222e+16
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 4.26745
+L2_error_u2= 7.52693
+Curl_error_u1= 16.6265
+Curl_error_u2= 15.4123
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 12.7321
+L2_error_u2= 12.4911
+Curl_error_u1= 42.7396
+Curl_error_u2= 40.4772
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 12.7321
+L2_error_u2= 12.4911
+Curl_error_u1= 42.7396
+Curl_error_u2= 40.4772
+

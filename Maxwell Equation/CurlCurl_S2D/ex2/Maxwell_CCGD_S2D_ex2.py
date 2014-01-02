@@ -18,6 +18,8 @@ from dolfin import *
 import numpy,sys
 import numpy as np
 from math import *  #import pi
+import scitools.BoxField
+import scitools.easyviz as ev
 
 # Create mesh and define function space
 # For example: python Maxwell_S2D.py  8 8 2 
@@ -61,6 +63,17 @@ f = f_expression()
 Ue=VectorFunctionSpace(mesh,"Lagrange",degree=5)
 ff = interpolate(f,Ue)
 
+# Define a higher-order approximation to the exact solution
+Ue=VectorFunctionSpace(mesh,"Lagrange",degree=3)
+class MyExpression1(Expression):
+    def eval(self, value, x):
+        value[0] = x[1]*(x[1] - 1)*exp(x[1])
+        value[1] = sin(pi*x[0])*exp(x[0])
+    def value_shape(self):
+        return (2,)
+u_exact = MyExpression1()
+u_ex = interpolate(u_exact,Ue)
+
 # Define variational form
 n = FacetNormal(mesh) 
 a = inner(curl(u),curl(v))*dx + inner(div(u),div(v))*dx - omega**2*inner(u,v)*dx
@@ -81,7 +94,7 @@ solve(A, u0.vector(), b)
 file = File("Data/Maxwell S2D_%gx%gP%g.pvd"%(nx,ny,nz))
 file << u0
 
-# Plot solution 
+# Plot approximation solution 
 visual_mesh = plot(mesh,title = "Mesh")
 visual_u = plot(u0,wireframe =  True,title = "the approximation of u",rescale = True , axes = True, basename = "deflection" ,legend ="u0")
 visual_u1 = plot(u0[0],title="the approximation of u1",rescale = True , axes = True, basename = "deflection" ,legend ="u1")
@@ -93,16 +106,7 @@ visual_u2.elevate(-65)
 visual_u1.write_png("Image/P%g_u1_%gx%g.png"%(nz,nx,ny))
 visual_u2.write_png("Image/P%g_u2_%gx%g.png"%(nz,nx,ny))
 
-# Define a higher-order approximation to the exact solution
-Ue=VectorFunctionSpace(mesh,"Lagrange",degree=3)
-class MyExpression1(Expression):
-    def eval(self, value, x):
-        value[0] = x[1]*(x[1] - 1)*exp(x[1])
-        value[1] = sin(pi*x[0])*exp(x[0])
-    def value_shape(self):
-        return (2,)
-u_exact = MyExpression1()
-u_ex = interpolate(u_exact,Ue)
+# Plot exact solution 
 visual_ue1 = plot(u_ex[0],title="the exact solution of u1",rescale = True , axes = True, basename = "deflection" ,legend ="u1")
 visual_ue2 = plot(u_ex[1],wireframe = True,title="the exact solution of u2",rescale = True , axes = True, basename = "deflection" ,legend ="u2")
 visual_ue1.elevate(-65) #tilt camera -65 degree(latitude dir)
@@ -110,6 +114,43 @@ visual_ue2.elevate(-65) #tilt camera -65 degree(latitude dir)
 visual_ue1.write_png("Image/P%gu1_exact_%gx%g.png"%(nz,nx,ny))
 visual_ue2.write_png("Image/P%gu2_exact_%gx%g.png"%(nz,nx,ny))
 #interactive()
+
+"""
+# Plot with scitools
+X = 0; Y = 1;
+u1,u2 = u0.split(deepcopy = True)
+
+us = u1 if u1.ufl_element().degree() == 1 else \
+     interpolate(u1, FunctionSpace(mesh, 'Lagrange', 1))
+u_box = scitools.BoxField.dolfin_function2BoxField(us, mesh, (nx,ny), uniform_mesh=True)
+
+
+ev.contour(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, 20, 
+           savefig='Image/Contour of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny), title='Contour plot of u1', colorbar='on')
+
+ev.figure()
+ev.surf(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, shading='interp', colorbar='on', title='surf plot of u1', savefig='Image/Surf of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+
+#ev.figure()
+#ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values,colorbar='on',shading='interp', title='mesh plot of u1', savefig='Image/Mesh of u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+
+# Plot exact solution
+u1_ex,u2_ex = u_ex.split(deepcopy = True)
+
+u1_ex = u1_ex if u1_ex.ufl_element().degree() == 1 else \
+     interpolate(u1_ex, FunctionSpace(mesh, 'Lagrange', 1))
+u_box = scitools.BoxField.dolfin_function2BoxField(u1_ex, mesh, (nx,ny), uniform_mesh=True)
+
+ev.figure()
+ev.contour(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, 20, 
+           savefig='Image/Contour of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny), title='Contour plot of exact u1',colorbar='on')
+
+ev.figure()
+ev.surf(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, shading='interp', colorbar='on', title='surf plot of exact u1', savefig='Image/Surf of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+
+#ev.figure()
+#ev.mesh(u_box.grid.coorv[X], u_box.grid.coorv[Y], u_box.values, colorbar="on", title='mesh plot of exact u1', savefig='Image/Mesh of exact solution u1_P%g(mesh:%g-%g).png'% (nz,nx,ny))
+"""
 
 #Define L2 norm and H1 norm relative errors 
 u1_error = (u0[0]-u_ex[0])**2*dx
