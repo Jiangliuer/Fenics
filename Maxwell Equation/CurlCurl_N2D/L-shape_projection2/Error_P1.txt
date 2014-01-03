@@ -64,3 +64,15 @@ L2_error_u2= 0.0783667
 Curl_error_u1= 0.809653
 Curl_error_u2= 1.44588
 
+The number of cells(triangle) in the mesh:384The number of vertices in the mesh:225Mesh:8x8P1
+L2_error_u1= 0.0481824
+L2_error_u2= 0.0783667
+Curl_error_u1= 0.809653
+Curl_error_u2= 1.44588
+
+The number of cells(triangle) in the mesh:384The number of vertices in the mesh:225Mesh:8x8P1
+L2_error_u1= 0.0481824
+L2_error_u2= 0.0783667
+Curl_error_u1= 0.809653
+Curl_error_u2= 1.44588
+

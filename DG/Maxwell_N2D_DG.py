@@ -3,7 +3,7 @@
 We solved use mixed finite element method.
 This demo program solves Maxwell L-shape bench-mark problem in 2D
     curl curl u  - omega^2 u = f    in  \Omega
-    u x n = 0   on \partial\Omega
+    u x n = k   on \partial\Omega
     div u = g   in \Omega
 Classical variational form 
  (curl u,curl v) + (div u,div v) - omega^2*(u,v) = (f,v) + (g,div v)
@@ -32,6 +32,7 @@ and exact solution given by
          2*y*r**(2.0/3.0)*sin((2.0/3.0)*theta)*(x**2 - 1)
     f =  - u 
     g = div u
+    k = 0
 """
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import Element
@@ -79,13 +80,16 @@ for i in range(num_refine):
     mesh=refine(mesh)
 
 # Define function space
-U_h = VectorFunctionSpace(mesh, "DG", num) #num次元
-Q_h = FunctionSpace(mesh, "CG", num)  #projection space of R(div)
-W_h = FunctionSpace(mesh, "CG", num)  #projection space of R(curl)
-Mix_h = MixedFunctionSpace([U_h,) 
+U_h = VectorFunctionSpace(mesh, "DG", num) # num element
+B = FunctionSpace(mesh, "Bubble", 3) # Bubble element
+Q_h = FunctionSpace(mesh, "DG", num-1)  # num-1 element
+Mix_h = MixedFunctionSpace([U_h,Q_h,B,Q_h,Q_h]) 
 print("num_sub_spaces():",Mix_h.num_sub_spaces())
 
 # Define boundary condition:u x n = u_1*n_2 - u_2*n1 = 0 and projection boundary: u = 0
+def project_boundary(x, on_boundary):
+        tol=1.0e-14
+        return on_boundary and (abs(x[1]-1)<tol or abs(x[1]+1)<tol or abs(x[0]-1)<tol or abs(x[0]+1)<tol or (x[0]>tol and abs(x[1])<tol))
 
 def u0_boundary(x, on_boundary):
 	tol=1.0e-14
@@ -167,36 +171,67 @@ u_exact = u_exact_Expression()
 # Define finite element space
 U = TrialFunction(Mix_h)
 V = TestFunction(Mix_h)
-(u_h) = split(U)
-(v_h) = split(V)
+(u_h, p, t, Rho_1, Rh0_2) = split(U)
+(v_h, q, w, rho1, rho2) = split(V)
 
 # Define parameter
 h = CellSize(mesh)
 n = FacetNormal(mesh)
+l = num # num's 
 omega = Constant('1.0')
 lamda = 1 # lambda could be 1 or sufficiently large 
 delta = 0.5 # 0 < delta < 1
 s = 0 # there are three choices for s: s = 0, s = (1 - r)/2 or s = 1
 xi = 1 # xi equal 1 or -1 corresponds to lambda = 1 or sufficiently large
 
+# Define k and Projection of k
+class k_Expression(Expression):
+    def __init__(self, mesh):
+        self._mesh = mesh
+    def eval(self, value, x):
+        tol = 1.0e-16
+        if abs(x[0])<tol and abs(x[1])<tol:
+          value[0] = 0
+        else:
+          value[0] = sin(x[0]*x[1]) 
+    def value_shap(shap):
+        return(1,) 
+k = k_Expression(mesh = mesh)
+k = interpolate(k,FunctionSpace(mesh,"Lagrange",degree= 3))
+plot(k)
 
-# Computation of Rho_1 and Rho_2 corresponds in F_\Omega and F_\partial\Omega
+Rho_k = TrialFunction(Q_h)
+rhok = TestFunction(Q_h)
+a_k = inner(Rho_k, rhok)*dS + inner(Rho_k, rhok)*ds
+L_k = inner(k, rhok)*dS + inner(k, rhok)*ds
+rho_k = Function(Q_h)
+bc_rk = DirichletBC(Q_h, w0, project_boundary)
+#(A_k, b_k) = assemble_system(a_k, L_k, bc_rk)
+A_k = assemble(a_k)
+b_k = assemble(b_k)
+solve(A_k, rho_k.vector(), b_k)
+plot(rho_k)
+interactive()
 
 
 # Define variational form
 a = inner(curl(u_h), curl(v_h))*dx + inner(div(u_h), div(v_h))*dx - \
     omega**2*inner(u_h, v_h)*dx + inner(cross(jump(v_h,n),n),cross(n,cross(curl(avg(u_h)),n)))*dS + \
-    inner(cross(v_h,n),cross(n,cross(curl(u_h),n)))*ds + /
+    inner(cross(v_h,n),cross(n,cross(curl(u_h),n)))*ds + \
     xi*inner(cross(jump(u_h,n),n),cross(n,cross(curl(avg(v_h)),n)))*dS + \
-    xi*inner(cross(u_h,n),cross(n,cross(curl(v_h),n)))*ds + /
+    xi*inner(cross(u_h,n),cross(n,cross(curl(v_h),n)))*ds + \
     h**(2*s)*inner(cross(jump(u_h,n), n), cross(jump(v_h,n), n))*dS + \
     h**(2*s)*inner(cross(u_h, n), cross(v_h, n))*ds + \
     h*inner(dot(jump(u_h,n), n), dot(jump(v_h,n), n))*dS + \
     h*inner(dot(jump(curl(u_h),n), n), dot(jump(curl(v_h), n)))*dS + \
-    delta* + \
-    lamda*h**(-1.0)*inner(Rho_1,  )   
-    inner(u + u_b,grad(q))*dx+ inner(CurlRu,w)*dx - inner(u + u_b,curl(w))*dx
-L = inner(f, v + v_b)*dx + inner(Sg, div(v + v_b))*dx 
+    delta*inner(curl(u_h),grad(q*w))*ds*inner(curl(v_h),grad(q*w))*ds/(inner(grad(q*w), grad(q*w))*ds) + \
+    lamda*h**(-1.0)*inner(Rho_1, cross(jump(v_h,n), n))*dS + lamda*h**(-1.0)*inner(Rho_1, cross(v_h, n))*ds + \
+    inner(Rho_1, rho1)*dS - inner(cross(jump(u_h,n), n), rho1)*dS + inner(Rh0_1, rho1)*ds - inner(cross(u_h,n), rho1)*ds + \
+    h**(-1.0)*inner(Rho_2, dot(v_h, n))*ds + inner(Rho_2, rh2)*ds - inner(dot(u_h,n), rh2)*ds   
+L = inner(f, v_h)*dx + inner(g, div(v_h))*dx + xi*k*cross(n, cross(curl(v_h), n))*ds + \
+    h**(2*s)*k*cross(v_h, n)*ds + \
+    delta*k*cross(n, cross(grad(q*w), n))*ds*inner(curl(v_h), grad(q*w))*ds/(inner(grad(q*w), grad(q*w))*ds) + \
+    lamda*h**(-1.0)*inner(rho_k, cross(v_h,n))*ds
 
 # Compute solution
 (A,b) = assemble_system(a,L,bc)
@@ -210,18 +245,21 @@ U_0 = Function(Mix_h)
 set_log_level(DEBUG)
 solve(A, U_0.vector(), b )
 print "Solved!"
-(u0,ub,Div_R_u,Curl_R_u) = split(U_0)  #extract components
-Ue=VectorFunctionSpace(mesh,"Lagrange",degree= 3,dim=2)
-u0=u0+ub
-"""
-u0 = interpolate(u0,Ue)
-ub = interpolate(ub,Ue)
-u0=u0+ub
-"""
+(u0, p0, t0, Rho_10, Rh0_20) = U_0.split(deepcopy=True)  
 # Save solution in VTK format
-#u1u2 = interpolate(u0,Ue)
 fileu = File("Data/u_%gx%g.pvd"%(nx,ny))
-#fileu << u1u2
+fileu << u0
+
+# Define a higher-order approximation to the exact solution
+t3 = time.time()
+Ue=VectorFunctionSpace(mesh,"Lagrange",degree= 3,dim=2)
+u_ex = interpolate(u_exact,Ue)
+t4 = time.time()
+# Save solution in VTK format
+file_ue = File("Data/ue_%gx%g.pvd"%(nx,ny))
+file_ue << u_ex
+
+
 
 # Plot solution(mesh,surf,contour) and save data.
 #import viper
@@ -262,13 +300,6 @@ visual_u1.write_png("Image/P%g_u1_%gx%g"%(num,nx,ny))
 #visual_u1.write_vtk("Data/u1_%gx%g.vtk"%(nx,ny))
 visual_u2.write_png("Image/P%g_u2_%gx%g"%(num,nx,ny))
 
-# Define a higher-order approximation to the exact solution
-t3 = time.time()
-u_ex = interpolate(u_exact,Ue)
-t4 = time.time()
-# Save solution in VTK format
-file_ue = File("Data/ue_%gx%g.pvd"%(nx,ny))
-file_ue << u_ex
 
 # Plot exact solution
 visual_ue1 = plot(u_ex[0],

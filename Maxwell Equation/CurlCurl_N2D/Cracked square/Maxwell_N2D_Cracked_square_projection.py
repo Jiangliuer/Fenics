@@ -118,8 +118,10 @@ omega = Constant('1.0')
 
 def theta(xx,yy):
    tol = 1.0e-16
-   if xx > tol:
+   if xx > tol and yy >= tol:
       return atan(yy/xx)
+   elif xx > tol and yy < tol:
+      return 2*pi + atan(yy/xx)
    elif xx < -tol:
       return  pi + atan(yy/xx)
    elif yy > tol:
@@ -144,11 +146,7 @@ class f_Expression(Expression):
         return (2,)
 
 f = f_Expression(mesh = mesh)
-f = interpolate(f,VectorFunctionSpace(mesh,"Lagrange",degree=1))
-plot(mesh)
-plot(f[0],axes = True)
-plot(f[1],axes = True)
-interactive()
+
 
 class g_Expression(Expression):
     def __init__(self, mesh):
@@ -184,6 +182,7 @@ class u_Expression(Expression):
         return (2,)
 u_exact = u_Expression(mesh=mesh)
 
+
 # Define variational problem
 U = TrialFunction(Mix_h)
 V = TestFunction(Mix_h)
@@ -200,6 +199,7 @@ bc_sg = DirichletBC(Q_h, w0, project_boundary)
 (A_s, b_s) = assemble_system(a_s, L_s, bc_sg)
 solve(A_s, Sg.vector(), b_s)
 #plot(Sg)
+#interactive()
 
 a = inner(curl(CurlRu),v)*dx - inner(grad(DivRu),v)*dx - \
     omega**2*inner(u,v)*dx + inner(DivRu,q)*dx + \
@@ -259,18 +259,20 @@ visual_u2 = plot(u0[1],
 		 legend ="u2")
 visual_mesh.write_png("Image/P%g_mesh_%gx%g.png"%(num,nx,ny))
 visual_u.write_png("Image/P%g_u_%gx%g"%(num,nx,ny))
+visual_u1.elevate(-65) #tilt camera -65 degree(latitude dir)
+visual_u2.elevate(-65) #tilt camera -65 degree(latitude dir)
 visual_u1.write_png("Image/P%g_u1_%gx%g.png"%(num,nx,ny))
 visual_u2.write_png("Image/P%g_u2_%gx%g.png"%(num,nx,ny))
 
 # Plot exact solution
-visual_ue1 = plot(0.1*u_ex[0],
+visual_ue1 = plot(u_ex[0],
   		  wireframe = False,
 		  title="the exact solution of u1",
     	          rescale = True,
 		  axes = True,
 		  basename = "deflection",
 		  legend ="u1")
-visual_ue2 = plot(0.1*u_ex[1],
+visual_ue2 = plot(u_ex[1],
 		  wireframe = False,
  		  title="the exact solution of u2",
 		  rescale = True,

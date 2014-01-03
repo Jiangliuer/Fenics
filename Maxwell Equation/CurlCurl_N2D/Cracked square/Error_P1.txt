@@ -64,3 +64,75 @@ L2_error_u2= 12.4911
 Curl_error_u1= 42.7396
 Curl_error_u2= 40.4772
 
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 12.7321
+L2_error_u2= 12.4911
+Curl_error_u1= 42.7396
+Curl_error_u2= 40.4772
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 14.1442
+L2_error_u2= 13.9169
+Curl_error_u1= 47.2621
+Curl_error_u2= 45.1725
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 8.38549
+L2_error_u2= 8.42204
+Curl_error_u1= 34.4033
+Curl_error_u2= 34.0199
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1105Mesh:16x16P1
+L2_error_u1= 3.40349
+L2_error_u2= 3.4445
+Curl_error_u1= 19.4714
+Curl_error_u2= 15.8882
+
+The number of cells(triangle) in the mesh:8192The number of vertices in the mesh:4257Mesh:32x32P1
+L2_error_u1= 1.59219
+L2_error_u2= 1.62289
+Curl_error_u1= 12.8276
+Curl_error_u2= 8.68093
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 4.32192
+L2_error_u2= 4.3627
+Curl_error_u1= 18.54
+Curl_error_u2= 18.5489
+
+The number of cells(triangle) in the mesh:512The number of vertices in the mesh:297Mesh:8x8P1
+L2_error_u1= 4.32192
+L2_error_u2= 4.3627
+Curl_error_u1= 18.54
+Curl_error_u2= 18.5489
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1105Mesh:16x16P1
+L2_error_u1= 1.73049
+L2_error_u2= 1.7712
+Curl_error_u1= 11.0941
+Curl_error_u2= 9.33381
+
+The number of cells(triangle) in the mesh:2048The number of vertices in the mesh:1105Mesh:16x16P1
+L2_error_u1= 1.73049
+L2_error_u2= 1.7712
+Curl_error_u1= 11.0941
+Curl_error_u2= 9.33381
+
+The number of cells(triangle) in the mesh:8192The number of vertices in the mesh:4257Mesh:32x32P1
+L2_error_u1= 0.79694
+L2_error_u2= 0.830323
+Curl_error_u1= 7.96034
+Curl_error_u2= 5.7567
+
+The number of cells(triangle) in the mesh:32768The number of vertices in the mesh:16705Mesh:64x64P1
+L2_error_u1= 0.39595
+L2_error_u2= 0.423606
+Curl_error_u1= 6.46479
+Curl_error_u2= 4.20942
+
+The number of cells(triangle) in the mesh:131072The number of vertices in the mesh:66177Mesh:128x128P1
+L2_error_u1= 0.206631
+L2_error_u2= 0.230516
+Curl_error_u1= 5.71473
+Curl_error_u2= 3.48823
+

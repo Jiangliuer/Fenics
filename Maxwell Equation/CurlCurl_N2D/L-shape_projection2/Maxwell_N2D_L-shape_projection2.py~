@@ -209,7 +209,6 @@ set_log_level(DEBUG)
 solve(A, U_0.vector(), b )
 print "Solved!"
 (u0,ub,Div_R_u,Curl_R_u) = split(U_0)  #extract components
-Ue=VectorFunctionSpace(mesh,"Lagrange",degree= 3,dim=2)
 u0=u0+ub
 """
 u0 = interpolate(u0,Ue)
@@ -220,6 +219,17 @@ u0=u0+ub
 #u1u2 = interpolate(u0,Ue)
 fileu = File("Data/u_%gx%g.pvd"%(nx,ny))
 #fileu << u1u2
+
+
+# Define a higher-order approximation to the exact solution
+t3 = time.time()
+Ue=VectorFunctionSpace(mesh,"Lagrange",degree= 3,dim=2)
+u_ex = interpolate(u_exact,Ue)
+t4 = time.time()
+# Save solution in VTK format
+file_ue = File("Data/ue_%gx%g.pvd"%(nx,ny))
+file_ue << u_ex
+
 
 # Plot solution(mesh,surf,contour) and save data.
 #import viper
@@ -260,13 +270,6 @@ visual_u1.write_png("Image/P%g_u1_%gx%g"%(num,nx,ny))
 #visual_u1.write_vtk("Data/u1_%gx%g.vtk"%(nx,ny))
 visual_u2.write_png("Image/P%g_u2_%gx%g"%(num,nx,ny))
 
-# Define a higher-order approximation to the exact solution
-t3 = time.time()
-u_ex = interpolate(u_exact,Ue)
-t4 = time.time()
-# Save solution in VTK format
-file_ue = File("Data/ue_%gx%g.pvd"%(nx,ny))
-file_ue << u_ex
 
 # Plot exact solution
 visual_ue1 = plot(u_ex[0],
