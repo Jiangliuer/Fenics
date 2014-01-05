@@ -40,7 +40,7 @@ We consider the following Maxwell curl-curl problem:
   \begin{eqnarray}
      \triangledown\times\triangledown\times \textbf{u} - \omega^2\mathbf{u} & = & \mathbf{f}, \qquad  in\ \Omega \\
      \triangledown\cdot\mathbf{u}  & = & g, \qquad in \ \Omega \\
-     \triangledown\times\mathbf{n} & = & \mathbf{0}, \qquad in\ \Gamma
+     \mathbf{u}\times\mathbf{n} & = & \mathbf{0}, \qquad in\ \Gamma
   \end{eqnarray}
   \end{block}
   \begin{block}{Hilbert Space}
@@ -50,7 +50,7 @@ We consider the following Maxwell curl-curl problem:
         \end{equation}
         \begin{equation}\label{space:U+_h}
         \nonumber
-        {\color{blue}\mathcal{U} = \mathbb{C}(\overline{\Omega})^d\cap H_0(\triangledown\times;\Omega)\cap H(\triangledown\cdot;\Omega)}
+        {\color{blue}\mathcal{U} = (H^1(\Omega))^d\cap H_0(\triangledown\times;\Omega)\cap H(\triangledown\cdot;\Omega)}
     \end{equation}
   \end{block}
 \end{frame}
@@ -80,8 +80,8 @@ We consider the following Maxwell curl-curl problem:
 \begin{frame}[t]{curl-curl problem}
    \begin{block}{Projection FEM Variational Form}
 
-     $\quad$Find $\mathbf{u}_h\in\mathcal{U}_h$, such that 
-     \begin{equation}{\color{red}B_h(\mathbf{u}_h,\mathbf{v}_h) = L_h(\mathbf{v}_h), \forall\ \mathbf{v}_h\in\mathcal{U}_h}\end{equation} 
+     $\quad$Find $\mathbf{u}_h\in\mathcal{U}_h$, such that
+     \begin{equation}{\color{red}B_h(\mathbf{u}_h,\mathbf{v}_h) = L_h(\mathbf{v}_h), \forall\ \mathbf{v}_h\in\mathcal{U}_h}\end{equation}
      where
      \[{\color{blue}\mathcal{U}_h = \big\{\mathbf{v}\in \mathcal{U}: \mathbf{v}|_T\in\big(P_{1}^{+}(T)\big)^d, \forall T\in \mathcal{T}_h\big\}} (Mini\ element)\]
      \begin{eqnarray}
@@ -92,22 +92,22 @@ We consider the following Maxwell curl-curl problem:
          &&L_h(\mathbf{v}_h) := (\mathbf{f},\mathbf{v}_h) + \big(g,\breve{R}_h(\triangledown\cdot\mathbf{v}_h)\big) \\ \nonumber
      \end{eqnarray}
    \end{block}
-   
+
 \end{frame}
 
 \begin{frame}[t]{curl-curl problem}
   \begin{block}{Implementation of Projection by Mixed FEM}
     $\quad$Let $\mathcal{M}_h = \mathcal{U}_h\times Q_h\times W_h$, find $(\mathbf{u}_h,p_h,\xi_h)\in\mathcal{M}_h$ such that $\forall(\mathbf{v}_h,q_h,w_h)\in\mathcal{M}_h$, we have the following equations
     \qquad\begin{enumerate}
-      \item $(p_h,q_h)_{0,h} + (\mathbf{u}_h,\triangledown q_h) = 0$ 
+      \item $(p_h,q_h)_{0,h} + (\mathbf{u}_h,\triangledown q_h) = 0$
       \item $(\xi_h,w_h)_{0,h} - (\mathbf{u}_h,\triangledown\times w) = 0$
       \item $(\triangledown\times p_h,\mathbf{v}_h) - (\triangledown \xi_h,\mathbf{v}_h) -\omega^2(\mathbf{u}_h,\mathbf{v}_h) = ( \mathbf{f},\mathbf{v}_h) + (Sg,\triangledown\cdot\mathbf{v}_h) $
-    \end{enumerate} 
+    \end{enumerate}
   where \\
-  \qquad$Sg$ is the projection of $g$ onto the space of $Q_h$, namely, find $Sg\in Q_h$ such that \\[-2ex] 
+  \qquad$Sg$ is the projection of $g$ onto the space of $Q_h$, namely, find $Sg\in Q_h$ such that \\[-2ex]
   \[(Sg,q_h)_{0,h} = (g,q_h),\quad \forall q_h\in Q_h\]
   Note1: To simplify, we sometimes omit $(.,.)_{0,h}.$
-  \end{block} 
+  \end{block}
 \end{frame}
 
 \subsection{curl-curl-grad-div problem}
@@ -140,7 +140,7 @@ We consider the following Maxwell curl-curl-grad-div problem:
          \omega^2(\mathbf{u}_h,\mathbf{v}_h)  \\ \nonumber
          &&L_h(\mathbf{v}_h) := (\mathbf{f},\mathbf{v}_h)
      \end{eqnarray}
-     Note2: The implementation of projection by mixed finite element method is similar as curl-curl problem. 
+     Note2: The implementation of projection by mixed finite element method is similar as curl-curl problem.
    \end{block}
 \end{frame}
 
@@ -233,7 +233,7 @@ We consider the following Maxwell curl-curl-grad-div problem:
      L-shape domain: $\Omega = [-1,1]^2/[0,1]\times[-1,0]$
      Let $\omega = 1$ and $\varphi(x,y) = r^{\frac{2}{3}}\sin(\frac{2}{3}\theta)$, the exact solution is given by\\[-2ex]
      \[\mathbf{u}(x,y) = \triangledown\big((x^2 - 1)(y^2 - 1)\varphi(x,y)\big)\]
-     where $x = r\cos(\theta)$, $y = r\sin(\theta)$ and $(r,\theta)$ is  polar coordinates. \\[-1ex]       
+     where $x = r\cos(\theta)$, $y = r\sin(\theta)$ and $(r,\theta)$ is  polar coordinates. \\[-1ex]
      \begin{figure}[bhpt]
          \hspace{-1.pt}
          \begin{minipage}[b]{0.5 \textwidth}
@@ -276,7 +276,7 @@ We consider the following Maxwell curl-curl-grad-div problem:
 
 \subsection{Numerical Results}
 \begin{frame}[shrink=10]{Results}
-   \begin{block}{Error}
+   \begin{block}{L-shape}
    \begin{center}
 
    {\color{red} L-shape Relative error of $\mathbf{u}$ by projection-mixed-fem}\\[2ex]
@@ -287,20 +287,20 @@ We consider the following Maxwell curl-curl-grad-div problem:
      \hline
      $\frac{\|u_1 - u_{1h}\|_0}{\|u_1\|_0}$ & 0.08746 & 0.04818 & 0.02870 & 0.01767 & 0.01103 \\
      ratio &  & 1.81 & 1.68 & 1.62 & 1.60  \\
-     $\frac{\|u_1 - u_{1h}\|_0}{\|u_1\|_0}$ & 0.13403 & 0.07837 & 0.04795 & 0.02987 & 0.01874 \\
+     $\frac{\|u_2 - u_{2h}\|_0}{\|u_2\|_0}$ & 0.13403 & 0.07837 & 0.04795 & 0.02987 & 0.01874 \\
      ratio &  & 1.71 & 1.63 & 1.61 & 1.59  \\
      \hline
    \end{tabular}\\[2ex]
-   {\color{red} Cracked-square Relative error of $\mathbf{u}$ by projection-mixed-fem}\\[2ex]
+   {\color{red} L-shape Relative error of $\mathbf{u}$ by projection-fem(ssyang)}\\[2ex]
       \begin{tabular}{cccccc}
      \hline
      % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
      mesh & 1/4 & 1/8 & 1/16 & 1/32 & 1/64 \\
      \hline
-     $\frac{\|u_1 - u_{1h}\|_0}{\|u_1\|_0}$ & 0.08746 & 0.04818 & 0.02870 & 0.01767 & 0.01103 \\
-     ratio &  & 1.81 & 1.68 & 1.62 & 1.60  \\
-     $\frac{\|u_1 - u_{1h}\|_0}{\|u_1\|_0}$ & 0.13403 & 0.07837 & 0.04795 & 0.02987 & 0.01874 \\
-     ratio &  & 1.71 & 1.63 & 1.61 & 1.59  \\
+     $\frac{\|u_1 - u_{1h}\|_0}{\|u_1\|_0}$ &0.1903& 0.1115& 0.0684 &0.0427 &0.0268 \\
+     ratio &  &1.7067  &1.6301  &1.6019  &1.5933   \\
+     $\frac{\|u_2 - u_{2h}\|_0}{\|u_2\|_0}$ &0.1903& 0.1115& 0.0684 &0.0427 &0.0268 \\
+     ratio &  &1.7067  &1.6301  &1.6019  &1.5933  \\
      \hline
    \end{tabular}
    \end{center}
@@ -308,31 +308,112 @@ We consider the following Maxwell curl-curl-grad-div problem:
 \end{frame}
 
 \begin{frame}[shrink=5]{Results}
-  \begin{block}{}
-  L-shape
+  \begin{block}{L-shape}
    \begin{center}
-     \includegraphics[width=0.4\textwidth]{Image/u1_32.png}
-     \includegraphics[width=0.4\textwidth]{Image/u1_e_32.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u1_32.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u1_e_32.png}
    \end{center}
    \begin{center}
-     \includegraphics[width=0.4\textwidth]{Image/u1_64.png}
-     \includegraphics[width=0.4\textwidth]{Image/u1_e_64.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u1_64.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u1_e_64.png}
    \end{center}
   \end{block}
 \end{frame}
 
 \begin{frame}[shrink=5]{Results}
-  \begin{block}{}
-  Cracked-square
+  \begin{block}{L-shape}
    \begin{center}
-     \includegraphics[width=0.4\textwidth]{Image/u1_32.png}
-     \includegraphics[width=0.4\textwidth]{Image/u1_e_32.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u2_32.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u2_e_32.png}
    \end{center}
    \begin{center}
-     \includegraphics[width=0.4\textwidth]{Image/u1_64.png}
-     \includegraphics[width=0.4\textwidth]{Image/u1_e_64.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u2_64.png}
+     \includegraphics[width=0.4\textwidth]{Image/L-shape/u2_e_64.png}
    \end{center}
   \end{block}
 \end{frame}
+
+\begin{frame}[shrink=5]{Results}
+  \begin{block}{L-shape}
+     \includegraphics[width=1.0\textwidth]{Image/L-shape_rate.png}
+  \end{block}
+\end{frame}
+
+%\begin{frame}[shrink=10]{Results}
+%   \begin{block}{Cracked-square}
+%   \begin{center}
+%     \  \ \\[18ex]
+%     {\color{red}Sorry, I don't have the right result! }\\
+%     \  \ \\[18ex] \  \
+%   \end{center}
+%   \end{block}
+%\end{frame}
+
+
+\begin{frame}[shrink=10]{Results}
+   \begin{block}{Cracked-square}
+   \begin{center}
+
+   {\color{red} Cracked-square Relative error of $\mathbf{u}$ by projection-mixed-fem}\\[2ex]
+   \begin{tabular}{cccccc}
+     \hline
+     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+     mesh & 1/8 & 1/16 & 1/32 & 1/64 & 1/128\\
+     \hline
+     $\frac{\|u_1 - u_{1h}\|_0}{\|u_1\|_0}$ &
+     4.32192 & 1.73049 & 0.79694 & 0.39595 &
+     0.206631 \\
+     ratio &  & 2.45 & 2.17 & 2.01 & 1.92  \\
+     $\frac{\|u_2 - u_{2h}\|_0}{\|u_2\|_0}$ & 4.3627 & 1.7712 & 0.83032 & 0.423606 & 0.230516 \\
+     ratio &  & 2.46 & 2.13 & 1.96 & 1.83  \\
+     \hline
+   \end{tabular}\\[2ex]
+
+   \end{center}
+   \end{block}
+\end{frame}
+
+
+\begin{frame}[shrink=5]{Results}
+  \begin{block}{Cracked-square}
+   \begin{center}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u1_64.png}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u1_e_64.png}
+   \end{center}
+   \begin{center}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u1_128.png}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u1_e_128.png}
+   \end{center}
+  \end{block}
+\end{frame}
+
+\begin{frame}[shrink=5]{Results}
+  \begin{block}{Cracked-square}
+  \begin{center}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u2_64.png}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u2_e_64.png}
+   \end{center}
+   \begin{center}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u2_128.png}
+     \includegraphics[width=0.4\textwidth]{Image/Cracked-square/u2_e_128.png}
+   \end{center}
+  \end{block}
+\end{frame}
+
+\begin{frame}[shrink=5]{Results}
+  \begin{block}{L-shape}
+     \includegraphics[width=1.0\textwidth]{Image/L-shape_rate.png}
+  \end{block}
+\end{frame}
+
+%\begin{frame}[t]{Results}
+%  \begin{block}{Question}
+%     \begin{itemize}
+%       \item In L-shape domain, why the error of $u_1\neq$ the error of $u_2$
+%       \item The relationship between projection method and mixed-projection method.
+%       \item Why the program of cracked-square domain is wrong?
+%     \end{itemize}
+%  \end{block}
+%\end{frame}
 
 \end{document}
